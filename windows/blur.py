@@ -16,9 +16,11 @@ from PIL import Image, ImageTk
 ctypes.windll.shcore.SetProcessDpiAwareness(2)
 user32 = ctypes.windll.user32
 
-MODEL = os.path.join(os.path.dirname(os.path.abspath(__file__)), "face_detection_yunet_2023mar.onnx")
-REC_MODEL = os.path.join(os.path.dirname(MODEL), "face_recognition_sface_2021dec.onnx")
-OWNER_FILE = os.path.join(os.path.dirname(MODEL), "owner.npy")
+HERE = os.path.dirname(os.path.abspath(__file__))
+MODELS = os.path.join(HERE, "..", "models")
+MODEL = os.path.join(MODELS, "face_detection_yunet_2023mar.onnx")
+REC_MODEL = os.path.join(MODELS, "face_recognition_sface_2021dec.onnx")
+OWNER_FILE = os.path.join(HERE, "owner.npy")
 MATCH_THRESHOLD = 0.363  # SFace cosine threshold (opencv_zoo)
 ENROLL_SAMPLES = 10
 YAW_LIMIT = 60      # degrees of head turn before blurring
