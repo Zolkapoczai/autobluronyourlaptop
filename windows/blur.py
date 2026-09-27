@@ -43,13 +43,13 @@ class Tracker(threading.Thread):
         super().__init__(daemon=True)
         self.facing = True
         self.running = True
-        for _ in range(15):  # camera may not be ready right after logon
+        while True:  # camera may be busy right after logon (e.g. Windows Hello)
             self.cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-            if self.cam.isOpened():
+            if self.cam.isOpened() and self.cam.read()[0]:
                 break
-            time.sleep(2)
-        else:
-            raise SystemExit("Webcam not available")
+            self.cam.release()
+            print(time.strftime("%X"), "webcam not ready, retrying")
+            time.sleep(5)
         self.det = cv2.FaceDetectorYN.create(MODEL, "", (320, 240), 0.6)
         self.rec = cv2.FaceRecognizerSF.create(REC_MODEL, "")
         self.owner = np.load(OWNER_FILE) if os.path.exists(OWNER_FILE) else None
@@ -166,6 +166,9 @@ def enroll(t):
 
 if __name__ == "__main__":
     import sys
+    if sys.stderr is None:  # pythonw: no console, log to file
+        sys.stdout = sys.stderr = open(os.path.join(HERE, "blur.log"), "a", buffering=1)
+        print(time.strftime("%c"), "started")
     t = Tracker()
     if "--enroll" in sys.argv:
         enroll(t)
