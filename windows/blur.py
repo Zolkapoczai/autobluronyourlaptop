@@ -136,6 +136,7 @@ class Overlay:
 
     def tick(self):
         if all(user32.GetAsyncKeyState(k) & 0x8000 for k in (VK_CONTROL, VK_SHIFT, VK_Q)):
+            print(time.strftime("%c"), "quit by hotkey")
             self.tracker.running = False
             self.root.destroy()
             return
@@ -168,6 +169,8 @@ if __name__ == "__main__":
     import sys
     if sys.stderr is None:  # pythonw: no console, log to file
         sys.stdout = sys.stderr = open(os.path.join(HERE, "blur.log"), "a", buffering=1)
+        import faulthandler
+        faulthandler.enable(sys.stderr)  # log native crashes too
         print(time.strftime("%c"), "started")
     t = Tracker()
     if "--enroll" in sys.argv:
