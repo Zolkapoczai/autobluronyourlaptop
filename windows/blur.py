@@ -167,6 +167,9 @@ def enroll(t):
 
 if __name__ == "__main__":
     import sys
+    ctypes.windll.kernel32.CreateMutexW(None, False, "Local\\AutoBlurOnYourLaptop")
+    if ctypes.windll.kernel32.GetLastError() == 183:  # ERROR_ALREADY_EXISTS: already running
+        raise SystemExit
     if sys.stderr is None:  # pythonw: no console, log to file
         sys.stdout = sys.stderr = open(os.path.join(HERE, "blur.log"), "a", buffering=1)
         import faulthandler
